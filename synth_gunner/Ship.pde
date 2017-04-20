@@ -3,7 +3,8 @@ class Ship{
   float y=0;
   float rad=50;
   float theta=0;
-  float speed=5;
+  float xSpeed=0;
+  float ySpeed=0;
   boolean s = false;
   boolean w = false;
   boolean a = false;
@@ -22,6 +23,8 @@ class Ship{
   void drawShip(){
     fill(255);
     ellipse(x,y,rad,rad);
+    x=x+xSpeed;
+    y=y+ySpeed;
   }
   
   void moveDown(){
@@ -42,13 +45,27 @@ class Ship{
   
   void refresh(){
     if(s){
-      y=y+speed;
-    } else if(w){
-      y=y-speed;
-    } else if(a){
-      x=x-speed;
-    } else if(d){
-      x=x+speed;
+      ySpeed=5;
+    } if(w){
+      ySpeed=-5;
+    } if(a){
+      xSpeed=-5;
+    } if(d){
+      xSpeed=5;
+    } if(s==false && w==false && a==false && d==false){
+      xSpeed=0;
+      ySpeed=0;
+    }
+    
+    //boundary check
+    if(x<0 && xSpeed<0){
+      x=0;
+    } if(x>width && xSpeed>0){
+      x=width;
+    } if(y<0 && ySpeed<0){
+      y=0;
+    } if(y>height && ySpeed>0){
+      y=height;
     }
   }
   
