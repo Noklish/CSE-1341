@@ -5,14 +5,12 @@ class Floater{
   float xSpeed=1;
   float ySpeed=1;
   float accel=0;
-  float theta=2/PI;
   
   Floater(){
     x = random(0,width);
     y = random(0,height);
     xSpeed = random(-1,1);
     ySpeed = random(-1,1);
-    theta=random(0,0.3);
     if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
       x=0;
     }
@@ -28,15 +26,15 @@ class Floater{
   }
   
   void drawHover(){
-    fill(0,0,255);
-    rectMode(CENTER);
-    rect(x,y,dim,dim);
+    image(floatImg,x-(dim/2),y-(dim/2));
+    noStroke();
+    noFill();
+    ellipse(x,y,dim,dim);
   }
   
   void hoverUpdate(){
     x=x+xSpeed;
     y=y+ySpeed;
-    theta=theta+0.2;
     xSpeed = min(max(xSpeed + random(-1,1), -2),2);
     ySpeed = min(max(ySpeed + random(-1,1), -2),2);
     //boundary check
@@ -46,5 +44,17 @@ class Floater{
     if (y < 0 && ySpeed < 0 || y > height && ySpeed > 0) {
       ySpeed = -ySpeed;
     }
+  }
+  
+  boolean isHit(){
+    boolean hit = false;
+    for(int i=bullets.size()-1; i>=0; i--){
+      float r = sqrt(pow(bullets.get(i).x-x,2)+pow(bullets.get(i).y-y,2));
+      if(r<dim-10){
+        hit = true;
+        bullets.remove(i);
+      }
+    }
+    return hit;
   }
 }

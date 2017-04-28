@@ -1,7 +1,7 @@
 class Ship{
   float x=0;
   float y=0;
-  float rad=50;
+  float rad=40;
   float theta=0;
   float xSpeed=0;
   float ySpeed=0;
@@ -10,10 +10,6 @@ class Ship{
   boolean a = false;
   boolean d = false;
   
-  Ship(){
-    
-  }
-  
   Ship(float newX, float newY, float nRad){
     x=newX;
     y=newY;
@@ -21,8 +17,14 @@ class Ship{
   }
   
   void drawShip(){
-    fill(255);
+    noFill();
+    noStroke();
     ellipse(x,y,rad,rad);
+    PImage shipImg;
+    shipImg = toARGB(loadImage("ship.bmp"));
+    setTransparency(color(255),shipImg);
+    shipImg.loadPixels();
+    image(shipImg, x-(rad/2), y-(rad/2));
     x=x+xSpeed;
     y=y+ySpeed;
   }
@@ -74,5 +76,45 @@ class Ship{
     w = false;
     a = false;
     d = false;
+  }
+  
+  //toARGB and setTransparency code taken from a lecture by Donya Quick
+  PImage toARGB(PImage orig) {
+    PImage newImg = createImage(orig.width, orig.height, ARGB);
+    for (int i=0; i<orig.pixels.length; i++) {
+      newImg.pixels[i]=orig.pixels[i];
+    }
+    return newImg;
+  }
+  
+  void setTransparency(color c, PImage x) {
+    for (int i=0; i<x.pixels.length; i++) {
+      if (x.pixels[i]==c) {
+        x.pixels[i]=color(0, 0);
+      }
+    }
+  }
+  
+  boolean isHit(){
+    boolean hit = false;
+    for(int i=floaters.size()-1; i>=0; i--){
+      float r = sqrt(pow(floaters.get(i).x-x,2)+pow(floaters.get(i).y-y,2));
+      if(r<rad){
+        hit = true;
+      }
+    }
+    for(int i=panners.size()-1; i>=0; i--){
+      float r = sqrt(pow(panners.get(i).x-x,2)+pow(panners.get(i).y-y,2));
+      if(r<rad){
+        hit = true;
+      }
+    }
+    for(int i=chasers.size()-1; i>=0; i--){
+      float r = sqrt(pow(chasers.get(i).x-x,2)+pow(chasers.get(i).y-y,2));
+      if(r<rad){
+        hit = true;
+      }
+    }
+    return hit;
   }
 }

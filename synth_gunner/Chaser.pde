@@ -21,7 +21,9 @@ class Chaser{
   }
   
   void drawChaser(){
-    fill(255,0,0);
+    image(chaseImg,x-(rad/2),y-(rad/2));
+    noStroke();
+    noFill();
     ellipse(x,y,rad,rad);
   }
   
@@ -43,5 +45,33 @@ class Chaser{
     if(y < 0 && ySpeed < 0 || y > height && ySpeed > 0){
       ySpeed = -ySpeed;
     }
+  }
+  
+  //toARGB and setTransparency code taken from a lecture by Donya Quick
+  PImage toARGB(PImage orig) {
+    PImage newImg = createImage(orig.width, orig.height, ARGB);
+    for (int i=0; i<orig.pixels.length; i++) {
+      newImg.pixels[i]=orig.pixels[i];
+    }
+    return newImg;
+  }
+  
+  void setTransparency(color c, PImage x) {
+    for (int i=0; i<x.pixels.length; i++) {
+      if (x.pixels[i]==c) {
+        x.pixels[i]=color(0, 0);
+      }
+    }
+  }
+  boolean isHit(){
+    boolean hit = false;
+    for(int i=bullets.size()-1; i>=0; i--){
+      float r = sqrt(pow(bullets.get(i).x-x,2)+pow(bullets.get(i).y-y,2));
+      if(r<rad-10){
+        hit = true;
+        bullets.remove(i);
+      }
+    }
+    return hit;
   }
 }
