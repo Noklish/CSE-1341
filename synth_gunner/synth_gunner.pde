@@ -21,59 +21,108 @@ ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 AudioPlayer gunFire;
 AudioPlayer menuTheme;
 AudioPlayer barrageTheme;
-AudioPlayer otherTheme;
+AudioPlayer buildTheme;
 Minim m;
 
+//sprites
 PImage chaseImg;
 PImage panImg;
 PImage floatImg;
 PImage menubg;
+PImage shipImg;
+PImage shipUp;
+PImage shipDown;
+PImage shipLeft;
+PImage shipRight;
+//booleans
 boolean menu = true;
-boolean game = false;
+boolean gameBarrage = false;
+boolean gameBuild = false;
 boolean dead = false;
 boolean canFire = true;
+//title screen
 String title = "Synth Gunner";
 String subtitle = "A game by Noah Schweser";
+String bar = "Barrage";
+String bui = "Build";
+//grid production
 float bgx = 0;
 float bgy = 0;
 float bgdim = 50;
+//title boxes
+float boxH = 100;
+float boxW = 220;
+float barX = 350;
+float barY = 400;
+float buiX = 350;
+float buiY = 600;
+//spawn functions
 long minSpawn = 500;
 long maxSpawn = 2000;
 long spawn = 2000;
 long refresh = 0;
+int roundNumber = 0;
 
 void setup() {
   size(900, 900);
   frameRate(30);
   menubg = loadImage("grid.jpg"); //Tron_Grid_Wallpaper_1680x1050 by Sarah-Hextall-Design on DeviantArt. Used without permission
   menubg.loadPixels();
+  //sounds
   m = new Minim(this);
   gunFire = m.loadFile("science_fiction_laser_002.mp3");
   menuTheme = m.loadFile("Derezzed.wav");
   barrageTheme = m.loadFile("Battlefield.wav");
+  buildTheme = m.loadFile("SwordofTruth.wav");
+  //sprites
   chaseImg = toARGB(loadImage("chaser.bmp"));
   setTransparency(color(255), chaseImg);
   floatImg = toARGB(loadImage("floater.bmp"));
   setTransparency(color(255), floatImg);
   panImg = toARGB(loadImage("panner.bmp"));
   setTransparency(color(255), panImg);
+  shipImg = toARGB(loadImage("ship.bmp"));
+  setTransparency(color(255),shipImg);
+  shipUp = toARGB(loadImage("ship.bmp"));
+  setTransparency(color(255),shipUp);
+  shipDown = toARGB(loadImage("shipDown.bmp"));
+  setTransparency(color(255),shipDown);
+  shipLeft = toARGB(loadImage("shipLeft.bmp"));
+  setTransparency(color(255),shipLeft);
+  shipRight = toARGB(loadImage("shipRight.bmp"));
+  setTransparency(color(255),shipRight);
+  //menu music
+  menuTheme.rewind();
+  menuTheme.play();
 }
 
 void draw() {
   if (menu) {
     titleScreen();
-    menuTheme.rewind();
-    menuTheme.play();
-  } else if (game) {
+  } if (gameBarrage) {
+    menuTheme.pause();
     grid();
     player.drawShip();
     player.refresh();
     barrage();
     if (player.isHit()) {
-      game=false;
+      gameBarrage=false;
       dead=true;
-      deathScreen();
     }
+  } else if (gameBuild) {
+    menuTheme.pause();
+    grid();
+    player.drawShip();
+    player.refresh();
+    build();
+    if (player.isHit()) {
+      gameBuild=false;
+      dead=true;
+    }
+  } if (dead) {
+    barrageTheme.pause();
+    buildTheme.pause();
+    deathScreen();
   }
   fire();
   refresh++; //firing cap
@@ -81,19 +130,13 @@ void draw() {
 
 void keyPressed() {
   if (key==' ') {
-    if (menu) {
-      menu=false;
-      game=true;
-      spawn = spawn + millis();
-      menuTheme.pause();
-      barrageTheme.rewind();
-      barrageTheme.play();
-    }
     if (dead) {
       menu = true;
       dead = false;
-      game = false;
-      titleScreen();
+      gameBarrage = false;
+      gameBuild = false;
+      menuTheme.rewind();
+      menuTheme.play();
     }
   }
   if (key=='s') {
@@ -142,6 +185,24 @@ void keyReleased() {
   player.release();
 }
 
+void mousePressed(){
+  if(mouseX>=barX && mouseX<=barX+boxW && mouseY>=barY && mouseY<=barY+boxH){
+    spawn = millis() + spawn;
+    menu=false;
+    gameBarrage=true;
+    barrageTheme.rewind();
+    barrageTheme.play();
+  }
+  if(mouseX>=buiX && mouseX<=buiX+boxW && mouseY>=buiY && mouseY<=buiY+boxH){
+    spawn = millis() + spawn;
+    menu=false;
+    gameBuild=true;
+    buildTheme.rewind();
+    buildTheme.play();
+    roundNumber=0;
+  }
+}
+
 void titleScreen() {
   image(menubg, 0, 0);
   fill(255, 90, 200);
@@ -149,6 +210,14 @@ void titleScreen() {
   text(title, 300, 200);
   textSize(20);
   text(subtitle, 340, 250);
+  stroke(255, 90, 200);
+  fill(0,100,255);
+  rect(barX,barY,boxW,boxH);
+  rect(buiX,buiY,boxW,boxH);
+  noStroke();
+  fill(255, 90, 200);
+  text(bar,barX+boxW/3,barY+boxH/2);
+  text(bui,buiX+85,buiY+boxH/2);
 }
 
 void grid() {
@@ -197,6 +266,23 @@ void deathScreen() {
       bullets.remove(i);
     }
   }
+  for(int i=floaters.size()-1; i>=0; i--){
+    if(floaters.size()>0){
+      floaters.remove(i);
+    }
+  }
+  for(int i=panners.size()-1; i>=0; i--){
+    if(panners.size()>0){
+      panners.remove(i);
+    }
+  }
+  for(int i=chasers.size()-1; i>=0; i--){
+    if(chasers.size()>0){
+      chasers.remove(i);
+    }
+  }
+  player.x=450;
+  player.y=450;
 }
 
 void barrage() {
@@ -212,6 +298,37 @@ void barrage() {
       chasers.add(new Chaser());
     }
   }
+  enemyBehavior();
+}
+
+void build(){
+  println(roundNumber);
+  println(floaters.size());
+  if(millis()>=spawn){
+    if(floaters.size()==0 && panners.size()==0 && chasers.size()==0){
+      roundNumber=roundNumber+1;
+      if(roundNumber<=5){
+        for(int i=1; i<=roundNumber; i++){
+          floaters.add(new Floater());
+        }
+      } else if(roundNumber>5 && roundNumber<=10){
+        for(int i=1; i<=roundNumber%5; i++){
+          panners.add(new Panner());
+        }
+      } else if(roundNumber>10 && roundNumber<=15){
+        for(int i=1; i<=roundNumber%5; i++){
+          floaters.add(new Floater());
+        }
+        for(int i=2; i<=roundNumber%3; i++){
+          panners.add(new Panner());
+        }
+      }
+    }
+  }
+  enemyBehavior();
+}
+
+void enemyBehavior(){
   for (int i=floaters.size()-1; i>=0; i--) {
     floaters.get(i).drawHover();
     floaters.get(i).hoverUpdate();
@@ -235,7 +352,7 @@ void barrage() {
   }
 }
 
-//toARGB and setTransparency code taken from a lecture by Donya Quick
+//toARGB, setTransparency, and flip code taken from lectures by Donya Quick
 PImage toARGB(PImage orig) {
   PImage newImg = createImage(orig.width, orig.height, ARGB);
   for (int i=0; i<orig.pixels.length; i++) {

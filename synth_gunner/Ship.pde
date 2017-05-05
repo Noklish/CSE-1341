@@ -20,10 +20,6 @@ class Ship{
     noFill();
     noStroke();
     ellipse(x,y,rad,rad);
-    PImage shipImg;
-    shipImg = toARGB(loadImage("ship.bmp"));
-    setTransparency(color(255),shipImg);
-    shipImg.loadPixels();
     image(shipImg, x-(rad/2), y-(rad/2));
     x=x+xSpeed;
     y=y+ySpeed;
@@ -31,30 +27,34 @@ class Ship{
   
   void moveDown(){
     s = true;
+    shipImg=shipDown;
   }
   
   void moveUp(){
     w = true;
+    shipImg=shipUp;
   }
   
   void moveLeft(){
     a = true;
+    shipImg=shipLeft;
   }
   
   void moveRight(){
     d = true;
+    shipImg=shipRight;
   }
   
   void refresh(){
     if(s){
       ySpeed=5;
-    } if(w){
+    } else if(w){
       ySpeed=-5;
-    } if(a){
+    } else if(a){
       xSpeed=-5;
-    } if(d){
+    } else if(d){
       xSpeed=5;
-    } if(s==false && w==false && a==false && d==false){
+    } else if(s==false && w==false && a==false && d==false){
       xSpeed=0;
       ySpeed=0;
     }

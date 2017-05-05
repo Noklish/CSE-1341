@@ -12,6 +12,12 @@ class Chaser{
     y = random(0,height);
     xSpeed = 0;
     ySpeed = 0;
+    if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
+      x=random(0,width);
+    }
+    if(y<player.y-(player.rad/2) && y>player.y+(player.rad/2)){
+      y=random(0,height);
+    }
   }
   
   Chaser(float newX, float newY, float newRad){
@@ -47,22 +53,6 @@ class Chaser{
     }
   }
   
-  //toARGB and setTransparency code taken from a lecture by Donya Quick
-  PImage toARGB(PImage orig) {
-    PImage newImg = createImage(orig.width, orig.height, ARGB);
-    for (int i=0; i<orig.pixels.length; i++) {
-      newImg.pixels[i]=orig.pixels[i];
-    }
-    return newImg;
-  }
-  
-  void setTransparency(color c, PImage x) {
-    for (int i=0; i<x.pixels.length; i++) {
-      if (x.pixels[i]==c) {
-        x.pixels[i]=color(0, 0);
-      }
-    }
-  }
   boolean isHit(){
     boolean hit = false;
     for(int i=bullets.size()-1; i>=0; i--){

@@ -12,10 +12,10 @@ class Floater{
     xSpeed = random(-1,1);
     ySpeed = random(-1,1);
     if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
-      x=0;
+      x=random(0,width);
     }
     if(y<player.y-(player.rad/2) && y>player.y+(player.rad/2)){
-      y=0;
+      y=random(0,height);
     }
   }
   
