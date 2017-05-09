@@ -1,27 +1,22 @@
 class Panner{
   float x=0;
   float y=0;
+  float ranX=0;
+  float ranY=random(0,height);
   float rad=50;
   float xSpeed=1;
   float ySpeed=1;
   
   Panner(){
-    x = 0;
-    y = random(0,height);
+    if(canSpawn()){
+      x = 0;
+      y = ranY;
+    } else {
+      x=0;
+      y=random(0,player.y-50);
+    }
     xSpeed = random(3,5);
     ySpeed = random(3,5);
-    if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
-      x=0;
-    }
-    if(y<player.y-(player.rad/2) && y>player.y+(player.rad/2)){
-      y=random(0,height);
-    }
-  }
-  
-  Panner(float newX, float newY, float newRad){
-    x=newX;
-    y=newY;
-    rad=newRad;
   }
   
   void drawPan(){
@@ -51,5 +46,16 @@ class Panner{
       }
     }
     return hit;
+  }
+  
+  boolean canSpawn(){
+    boolean good = true;
+    if(ranX>player.x-50 && ranX<player.x+50){
+      good = false;
+    }
+    if(ranY>player.y-50 && ranY<player.y+50){
+      good = false;
+    }
+    return good;
   }
 }

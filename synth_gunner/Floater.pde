@@ -1,28 +1,23 @@
 class Floater{
   float x=0;
   float y=0;
+  float ranX=random(0,width);
+  float ranY=random(0,height);
   float dim=40;
   float xSpeed=1;
   float ySpeed=1;
   float accel=0;
   
   Floater(){
-    x = random(0,width);
-    y = random(0,height);
+    if(canSpawn()){
+      x = ranX;
+      y = ranY;
+    } else {
+      x=random(0,player.x-50);
+      y=random(0,player.y-50);
+    }
     xSpeed = random(-1,1);
     ySpeed = random(-1,1);
-    if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
-      x=random(0,width);
-    }
-    if(y<player.y-(player.rad/2) && y>player.y+(player.rad/2)){
-      y=random(0,height);
-    }
-  }
-  
-  Floater(float newX, float newY, float newDim){
-    x=newX;
-    y=newY;
-    dim=newDim;
   }
   
   void drawHover(){
@@ -56,5 +51,16 @@ class Floater{
       }
     }
     return hit;
+  }
+  
+  boolean canSpawn(){
+    boolean good = true;
+    if(ranX>player.x-50 && ranX<player.x+50){
+      good = false;
+    }
+    if(ranY>player.y-50 && ranY<player.y+50){
+      good = false;
+    }
+    return good;
   }
 }

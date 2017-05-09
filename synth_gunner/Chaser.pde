@@ -1,6 +1,8 @@
 class Chaser{
   float x=0;
   float y=0;
+  float ranX=random(0,width);
+  float ranY=random(0,height);
   float rad=50;
   float xAccel = 0.1;
   float yAccel = 0.1;
@@ -8,22 +10,15 @@ class Chaser{
   float ySpeed=0;
   
   Chaser(){
-    x = random(0,width);
-    y = random(0,height);
+    if(canSpawn()){
+      x = ranX;
+      y = ranY;
+    } else {
+      x=random(0,player.x-50);
+      y=random(0,player.y-50);
+    }
     xSpeed = 0;
     ySpeed = 0;
-    if(x<player.x-(player.rad/2) && x>player.x+(player.rad/2)){
-      x=random(0,width);
-    }
-    if(y<player.y-(player.rad/2) && y>player.y+(player.rad/2)){
-      y=random(0,height);
-    }
-  }
-  
-  Chaser(float newX, float newY, float newRad){
-    x=newX;
-    y=newY;
-    rad=newRad;
   }
   
   void drawChaser(){
@@ -63,5 +58,16 @@ class Chaser{
       }
     }
     return hit;
+  }
+  
+  boolean canSpawn(){
+    boolean good = true;
+    if(ranX>player.x-50 && ranX<player.x+50){
+      good = false;
+    }
+    if(ranY>player.y-50 && ranY<player.y+50){
+      good = false;
+    }
+    return good;
   }
 }

@@ -78,23 +78,6 @@ class Ship{
     d = false;
   }
   
-  //toARGB and setTransparency code taken from a lecture by Donya Quick
-  PImage toARGB(PImage orig) {
-    PImage newImg = createImage(orig.width, orig.height, ARGB);
-    for (int i=0; i<orig.pixels.length; i++) {
-      newImg.pixels[i]=orig.pixels[i];
-    }
-    return newImg;
-  }
-  
-  void setTransparency(color c, PImage x) {
-    for (int i=0; i<x.pixels.length; i++) {
-      if (x.pixels[i]==c) {
-        x.pixels[i]=color(0, 0);
-      }
-    }
-  }
-  
   boolean isHit(){
     boolean hit = false;
     for(int i=floaters.size()-1; i>=0; i--){
